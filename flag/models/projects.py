@@ -25,3 +25,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProjectClientSecret(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    secret_hash = models.CharField(max_length=200)
+    project = models.ForeignKey("flag.Project", on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
