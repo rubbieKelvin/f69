@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django import forms
 from account.models import User
 from django.http import HttpRequest, HttpResponse
+from django.conf import settings
 
 
 class EmailUserCreationForm(forms.ModelForm):
@@ -54,7 +55,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 # Signup
-def signup_view(request):
+def signup_view(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("home")
 
@@ -77,6 +78,11 @@ def signup_view(request):
 
 
 @login_required
-def home_view(request):
-    """Home page for authenticated users"""
+def home_view(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html", {"user": request.user})
+
+
+@login_required
+def logout_view(request: HttpRequest) -> HttpResponse:
+    logout(request)
+    return redirect(settings.LOGOUT_REDIRECT_URL)
