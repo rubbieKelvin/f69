@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - F69</title>
+    <link rel="stylesheet" href="{% static 'web/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'web/home.css' %}" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">F69</div>
+        <div class="user-menu">
+          <span class="user-info"
+            >Welcome, {{ user.first_name|default:user.email }}</span
+          >
+          <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container"></div>
+  </body>
+</html>
