@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+.env
+
+env/
+
+*/migrations
+.gitignore
+.db.sqlite3
