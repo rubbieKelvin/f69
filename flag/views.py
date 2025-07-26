@@ -10,6 +10,6 @@ from rest_framework.renderers import JSONRenderer
 # project_secret
 
 @api_view(["post"])
-@renderer_classes([])
+@renderer_classes([JSONRenderer])
 def cook_feature_flags(request: Request, project_id: str) -> Response:
     return Response([])
