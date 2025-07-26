@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% if project %}{{ project.name }}{% else %}Project Not Found{% endif %} -
+      F69
+    </title>
+    <link rel="stylesheet" href="{% static 'web/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'web/project.css' %}" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">F69</div>
+        <div class="user-menu">
+          <span class="user-info"
+            >Welcome, {{ user.first_name|default:user.email }}</span
+          >
+          <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{% url 'home' %}">Projects</a>
+        <span class="breadcrumb-separator">›</span>
+        <span>
+            {% if project %}
+            {{ project.name }}
+            {% else %}
+            Not Found
+            {% endif %}
+        </span>
+      </div>
+
+      {% if project %}
+      <!-- Project Header -->
+      <div class="project-header">
+        <div class="project-info">
+          <h1>{{ project.name }}</h1>
+          {% if project.description %}
+          <p class="project-description">{{ project.description }}</p>
+          {% else %}
+          <p class="project-description no-description">
+            No description provided
+          </p>
+          {% endif %}
+          <div class="project-meta">
+            <span class="meta-item"
+              >Created {{ project.created_at|date:"M d, Y" }}</span
+            >
+            <span class="meta-item">
+                By{{ project.author.first_name|default:project.author.email }}
+            </span>
+          </div>
+        </div>
+        <div class="project-actions">
+          <a
+            href="/admin/flag/project/{{ project.id }}/change/"
+            class="btn btn-secondary"
+            >Add new feature</a
+          >
+        </div>
+      </div>
+
+      {% else %}
+      <!-- Project Not Found -->
+      <div class="not-found">
+        <h1>Project Not Found</h1>
+        <p>
+          The project you're looking for doesn't exist or you don't have access
+          to it.
+        </p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Back to Projects</a>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Entity, Feature, Flag, Project, Segment
+from .models import Entity, Feature, Flag, Project, Segment, ProjectAccess
 
 
 @admin.register(Entity)
@@ -20,3 +20,7 @@ class ProjectAdmin(admin.ModelAdmin): ...
 
 @admin.register(Segment)
 class SegmentAdmin(admin.ModelAdmin): ...
+
+
+@admin.register(ProjectAccess)
+class ProjectAccessAdmin(admin.ModelAdmin): ...
