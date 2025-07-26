@@ -1,4 +1,4 @@
-from .projects import Project
+from .projects import Project, ProjectClientSecret
 from .features import Feature
 from .entities import Entity
 from .segments import Segment
