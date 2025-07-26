@@ -21,6 +21,58 @@
       </div>
     </header>
 
-    <div class="container"></div>
+    <div class="container">
+      <!-- Messages -->
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+         <div class="message message-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- project header -->
+      <div class="section-header">
+        <h2>Projects</h2>
+        <a href="{% url 'create-project' %}" class="create-btn"
+          >Create project</a
+        >
+      </div>
+
+      <!-- project list -->
+      <div class="projects-section">
+        {% if projects %}
+          <div class="projects-grid">
+            {% for project in projects %}
+           <a href="{% url 'project-detail' project.id %}" class="project-card">
+             <div class="project-header">
+               <h3>{{ project.name }}</h3>
+               <span class="project-date"
+                 >{{ project.created_at|date:"M d, Y" }}</span
+               >
+             </div>
+
+             {% if project.description %}
+             <p class="project-description">{{ project.description }}</p>
+             {% else %}
+             <p class="project-description" style="font-style: italic">
+               no description
+             </p>
+             {% endif %}
+
+           </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <h3>No projects yet</h3>
+            <p>Create your first project to start managing feature flags.</p>
+           <a href="{% url 'create-project' %}" class="create-btn"
+             >Create your first project</a
+           >
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </body>
 </html>
