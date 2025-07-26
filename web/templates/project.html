@@ -29,11 +29,7 @@
         <a href="{% url 'home' %}">Projects</a>
         <span class="breadcrumb-separator">›</span>
         <span>
-            {% if project %}
-            {{ project.name }}
-            {% else %}
-            Not Found
-            {% endif %}
+          {% if project %} {{ project.name }} {% else %} Not Found {% endif %}
         </span>
       </div>
 
@@ -54,16 +50,12 @@
               >Created {{ project.created_at|date:"M d, Y" }}</span
             >
             <span class="meta-item">
-                By{{ project.author.first_name|default:project.author.email }}
+              By{{ project.author.first_name|default:project.author.email }}
             </span>
           </div>
         </div>
         <div class="project-actions">
-          <a
-            href="/admin/flag/project/{{ project.id }}/change/"
-            class="btn btn-secondary"
-            >Add new feature</a
-          >
+          <a href="#" class="btn btn-secondary">Add new feature</a>
         </div>
       </div>
 
