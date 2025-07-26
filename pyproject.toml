@@ -1,5 +1,5 @@
 [project]
-name = "toggle"
+name = "f69"
 version = "0.1.0"
 description = "A powerful and flexible feature flagging system built with Django."
 readme = "README.md"

@@ -1,0 +1,48 @@
+/* Dashboard/Home page styling */
+.header {
+  background: white;
+  border-bottom: 1px solid #ecf0f1;
+  padding: 1rem 0;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header .logo {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #2c3e50;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.logout-link {
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.logout-link:hover {
+  color: #2c3e50;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 20px;
+}
