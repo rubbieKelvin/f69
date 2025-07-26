@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .models import User
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as UA
 from .forms import UserCreationForm, UserChangeForm
 
 
-class NewUserAdmin(UserAdmin):
+class UserAdmin(UA):
     add_form = UserCreationForm
     form = UserChangeForm
     model = User
@@ -53,4 +53,4 @@ class NewUserAdmin(UserAdmin):
     ordering = ("-date_joined",)
 
 
-admin.site.register(User, NewUserAdmin)
+admin.site.register(User, UserAdmin)
