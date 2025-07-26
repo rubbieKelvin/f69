@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 
-class NewUser(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
