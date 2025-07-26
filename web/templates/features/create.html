@@ -1,0 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - F69</title>
+    <link rel="stylesheet" href="{% static 'web/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'web/project-form.css' %}" />
+</head>
+<body>
+    <a href="{% url 'home' %}" class="back-link">← Back to Dashboard</a>
+    
+</body>
