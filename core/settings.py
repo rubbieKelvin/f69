@@ -74,6 +74,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 AUTH_USER_MODEL = "account.User"
 
+# Authentication settings
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/home/'
+LOGOUT_REDIRECT_URL = '/'
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,

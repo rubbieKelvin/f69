@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+DJANGO_SUPERUSER_PASSWORD=admin python manage.py createsuperuser \
+    --email admin@f69.dev \
+    --noinput

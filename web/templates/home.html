@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - F69</title>
+    <link rel="stylesheet" href="{% static 'web/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'web/home.css' %}" />
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">F69</div>
+            <div class="user-menu">
+                <span class="user-info">Welcome, {{ user.first_name|default:user.email }}</span>
+                <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="welcome">
+            <h1>Dashboard</h1>
+            <p>Manage your feature flags and monitor your deployments</p>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>Projects</h3>
+                <p>Create and manage your feature flag projects</p>
+                <a href="/admin/flag/project/" class="card-link">Manage Projects</a>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Features</h3>
+                <p>Define features that can be toggled on or off</p>
+                <a href="/admin/flag/feature/" class="card-link">Manage Features</a>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Flags</h3>
+                <p>Control which features are enabled or disabled</p>
+                <a href="/admin/flag/flag/" class="card-link">Manage Flags</a>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Segments</h3>
+                <p>Create user segments for targeted feature rollouts</p>
+                <a href="/admin/flag/segment/" class="card-link">Manage Segments</a>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Entities</h3>
+                <p>Manage users and entities for feature targeting</p>
+                <a href="/admin/flag/entity/" class="card-link">Manage Entities</a>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Admin Panel</h3>
+                <p>Access the full Django admin interface</p>
+                <a href="/admin/" class="card-link">Open Admin</a>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <h2>Quick Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Active Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Total Features</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Enabled Flags</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">User Segments</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html> 
