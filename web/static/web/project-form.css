@@ -1,0 +1,154 @@
+/* Project form styling */
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 500px;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.form-container {
+  background: white;
+  padding: 3rem 2rem;
+  border: 1px solid #ecf0f1;
+  text-align: center;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ecf0f1;
+  background: #fafafa;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  resize: vertical;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #2c3e50;
+}
+
+.form-textarea {
+  min-height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s ease;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: #2c3e50;
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.8;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #7f8c8d;
+  border: 1px solid #ecf0f1;
+}
+
+.btn-secondary:hover {
+  color: #2c3e50;
+  border-color: #2c3e50;
+}
+
+.back-link {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  color: #2c3e50;
+}
+
+.errorlist {
+  list-style: none;
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.errorlist li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: #fdf2f2;
+  border: 1px solid #f5c6cb;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .back-link {
+    position: static;
+    display: block;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .container {
+    padding: 0 15px;
+  }
+} 
