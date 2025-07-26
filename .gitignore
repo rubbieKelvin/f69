@@ -13,5 +13,4 @@ wheels/
 env/
 
 */migrations
-.gitignore
-.db.sqlite3
+db.sqlite3
