@@ -1,33 +1,56 @@
 from django.contrib import admin
-from .models import NewUser
+from .models import User
 from django.contrib.auth.admin import UserAdmin
-# Register your models here.
-
-from .forms import NewUserCreationForm, NewUserChangeForm
-
+from .forms import UserCreationForm, UserChangeForm
 
 
 class NewUserAdmin(UserAdmin):
-    add_form = NewUserCreationForm
-    form = NewUserChangeForm
-    model = NewUser
-    list_display = ("id","email","first_name","last_name", "is_staff", "is_active",)
-    list_filter = ("email","first_name","last_name", "is_staff", "is_active",)
-    fieldsets = (
-        (None, {"fields": ("email","first_name","last_name" "password")}),
-        ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
+    add_form = UserCreationForm
+    form = UserChangeForm
+    model = User
+    list_display = (
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "is_staff",
+        "is_active",
     )
-    add_fieldsets = (
-        (None, {
-            "classes": ("wide",),
-            "fields": (
-                "email","first_name","last_name","password1", "password2", "is_staff",
-                "is_active", "groups", "user_permissions"
-            )}
+    list_filter = (
+        "email",
+        "first_name",
+        "last_name",
+        "is_staff",
+        "is_active",
+    )
+    fieldsets = (
+        (None, {"fields": ("email", "first_name", "last_name", "password")}),
+        (
+            "Permissions",
+            {"fields": ("is_staff", "is_active", "groups", "user_permissions")},
         ),
     )
-    search_fields = ("email","first_name","last_name")
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password1",
+                    "password2",
+                    "is_staff",
+                    "is_active",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+    )
+    search_fields = ("email", "first_name", "last_name")
     ordering = ("-date_joined",)
 
 
-admin.site.register(NewUser, NewUserAdmin)
+admin.site.register(User, NewUserAdmin)
