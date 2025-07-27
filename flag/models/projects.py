@@ -12,7 +12,7 @@ if t.TYPE_CHECKING:
     from .features import Feature
     from .entities import Entity
     from .segments import Segment
-
+    from .environment import Environment
 
 class Project(models.Model):
     """A user can create a project where flags needs to be managed"""
@@ -29,7 +29,8 @@ class Project(models.Model):
     access: "Manager[ProjectAccess]"
     features: "Manager[Feature]"
     entities: "Manager[Entity]"
-    segments: 'Manager[Segment]'
+    segments: "Manager[Segment]"
+    environments: "Manager[Environment]"
 
     def __repr__(self):
         name = self.name
