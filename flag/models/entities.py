@@ -19,9 +19,10 @@ class Entity(models.Model):
     project = models.ForeignKey(
         "flag.Project", on_delete=models.CASCADE, related_name="entities"
     )
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    vars = models.JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "entities"
+        unique_together = [['external_id', 'project']]
