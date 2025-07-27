@@ -685,3 +685,37 @@ class SegmentEditView(LoginRequiredMixin, View):
                 "title": f"Edit Segment - {segment.name}",
             },
         )
+
+
+def delete_entity_view(request: HttpRequest, project_id: str, entity_id: str) -> HttpResponse:
+    """View to delete an entity"""
+    user = t.cast(User, request.user)
+    
+    if request.method != 'POST':
+        messages.error(request, "Invalid request method")
+        return redirect("project-entities", id=project_id)
+    
+    # Get the project and verify access
+    try:
+        project = Project.objects.filter(access__user__id=user.id).get(id=project_id)
+    except Project.DoesNotExist:
+        messages.error(request, "Project not found or access denied")
+        return redirect("home")
+    except ValidationError:
+        messages.error(request, "Invalid project ID")
+        return redirect("home")
+    
+    # Get the entity and verify it belongs to this project
+    try:
+        entity = project.entities.get(id=entity_id)
+        entity_name = entity.name
+        entity.delete()
+        messages.success(request, f'Entity "{entity_name}" has been deleted successfully.')
+    except Entity.DoesNotExist:
+        messages.error(request, "Entity not found or access denied")
+    except ValidationError:
+        messages.error(request, "Invalid entity ID")
+    except Exception as e:
+        messages.error(request, "An error occurred while deleting the entity")
+    
+    return redirect("project-entities", id=project_id)

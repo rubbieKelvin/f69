@@ -17,6 +17,7 @@ urlpatterns = [
     path('projects/<str:project_id>/environments/new/', project.environment_create_view, name="create-environment"),
     path('projects/<str:project_id>/segments/new/', project.SegmentCreateView.as_view(), name="create-segment"),
     path('projects/<str:project_id>/segments/<str:segment_id>/edit/', project.SegmentEditView.as_view(), name="edit-segment"),
+    path('projects/<str:project_id>/entities/<str:entity_id>/delete/', project.delete_entity_view, name="delete-entity"),
     path('projects/<str:id>/entities/', project.project_entities_view, name="project-entities"),
     path('projects/<str:id>/environments/', project.project_environments_view, name="project-environments"),
     path('projects/<str:id>/segments/', project.project_segments_view, name="project-segments"),
