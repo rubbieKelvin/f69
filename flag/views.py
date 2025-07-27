@@ -8,9 +8,9 @@ from .models.projects import Project, ProjectClientSecret
 
 def authenticator(request: HttpRequest):
     # Note: the client id is the project author's id
-    client_id = request.headers.get("f69_client_id")
-    project_id = request.headers.get("f69_project_id")
-    project_secret = request.headers.get("f69_project_secret")
+    client_id = request.headers.get("X-F69-Client-Id")
+    project_id = request.headers.get("X-F69-Project-Id")
+    project_secret = request.headers.get("X-F69-Project-Secret")
 
     try:
         project = Project.objects.filter(author__id=client_id).get(id=project_id)

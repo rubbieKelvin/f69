@@ -1,14 +1,15 @@
-{% extends 'project/base.html' %}
-
-{% block project_actions %}
-<a href="#" class="btn btn-primary">Create Secret</a>
-{% endblock %}
-
-{% block content %}
+{% extends 'project/base.html' %} {% block project_actions %}
+<a href="{% url 'create-secret' project.id %}" class="btn btn-primary"
+  >Create Secret</a
+>
+{% endblock %} {% block content %}
 <div class="api-tab">
   <div class="tab-header">
     <h2>API Configuration</h2>
-    <p>Manage API credentials and secrets for this project. Use these to authenticate with the F69 API.</p>
+    <p>
+      Manage API credentials and secrets for this project. Use these to
+      authenticate with the F69 API.
+    </p>
   </div>
 
   <div class="api-credentials">
@@ -20,9 +21,11 @@
           <code class="credential-code">{{ client_id }}</code>
           <button class="copy-btn" data-copy="{{ project.id }}">Copy</button>
         </div>
-        <small class="credential-help">Use this as your client identifier when making API requests</small>
+        <small class="credential-help"
+          >Use this as your client identifier when making API requests</small
+        >
       </div>
-      
+
       <div class="credential-item">
         <label class="credential-label">Project ID</label>
         <div class="credential-value">
@@ -37,18 +40,19 @@
   <div class="api-secrets">
     <div class="section-header">
       <h3>API Secrets</h3>
-      <a href="#" class="btn btn-secondary">Create New Secret</a>
+      <a href="{% url 'create-secret' project.id %}" class="btn btn-secondary"
+        >Create New Secret</a
+      >
     </div>
-    
+
     {% if secrets %}
     <div class="secrets-table">
       <div class="table-header">
         <div class="th">Secret Name</div>
         <div class="th">Created</div>
-        <div class="th">Last Used</div>
         <div class="th">Actions</div>
       </div>
-      
+
       {% for secret in secrets %}
       <div class="table-row">
         <div class="td">
@@ -57,16 +61,13 @@
             <div class="secret-id">ID: {{ secret.id|slice:":8" }}...</div>
           </div>
         </div>
-        <div class="td">
-          {{ secret.created_at|date:"M d, Y H:i" }}
-        </div>
-        <div class="td">
-          <span class="text-muted">Never</span>
-        </div>
+        <div class="td">{{ secret.created_at|date:"M d, Y H:i" }}</div>
         <div class="td">
           <div class="action-buttons">
-            <button class="btn-small btn-secondary">View</button>
-            <button class="btn-small btn-danger">Revoke</button>
+            <form method="post" action="{% url 'delete-secret' project.id secret.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-small btn-danger" onclick="return confirm('Are you sure you want to revoke this secret? This action cannot be undone.')">Revoke</button>
+            </form>
           </div>
         </div>
       </div>
@@ -76,8 +77,12 @@
     <div class="empty-state">
       <div class="empty-icon">🔑</div>
       <h3>No API secrets yet</h3>
-      <p>Create your first API secret to start authenticating with the F69 API.</p>
-      <a href="#" class="btn btn-primary">Create Your First Secret</a>
+      <p>
+        Create your first API secret to start authenticating with the F69 API.
+      </p>
+      <a href="{% url 'create-secret' project.id %}" class="btn btn-primary"
+        >Create Your First Secret</a
+      >
     </div>
     {% endif %}
   </div>
@@ -87,12 +92,12 @@
     <div class="docs-info">
       <p>Use these credentials to authenticate with the F69 API:</p>
       <div class="code-example">
-        <pre><code>curl -H "Authorization: Bearer YOUR_SECRET" \
-     -H "X-Client-ID: {{ project.id }}" \
-     https://api.f69.dev/v1/features</code></pre>
+        <pre><code>curl --location --request POST '{{ api_url }}' \
+  --header 'x-f69-client-id: {{client_id}}' \
+  --header 'x-f69-project-id: {{project.id}}' \
+  --header 'x-f69-project-secret: my-proj-secret'</code></pre>
       </div>
-      <a href="#" class="docs-link">View Full API Documentation →</a>
     </div>
   </div>
 </div>
-{% endblock %} 
+{% endblock %}

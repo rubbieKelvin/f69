@@ -221,6 +221,117 @@ label {
   margin-bottom: 0.25rem;
 }
 
+/* Secret creation specific styles */
+.security-info {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.security-info h3 {
+  margin: 0 0 1rem 0;
+  color: #856404;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.security-info ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #856404;
+}
+
+.security-info ul li {
+  margin-bottom: 0.5rem;
+}
+
+/* Secret display styles */
+.secret-display {
+  text-align: left;
+}
+
+.secret-warning {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.secret-warning h3 {
+  margin: 0 0 0.5rem 0;
+  color: #721c24;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.secret-warning p {
+  margin: 0;
+  color: #721c24;
+}
+
+.secret-details {
+  margin-bottom: 2rem;
+}
+
+.secret-field {
+  margin-bottom: 1.5rem;
+}
+
+.secret-label {
+  display: block;
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.secret-value {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.secret-value code {
+  background: #f8f9fa;
+  color: #2c3e50;
+  padding: 0.75rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  border: 1px solid #ecf0f1;
+  flex: 1;
+  word-break: break-all;
+}
+
+.secret-token code {
+  background: #2c3e50;
+  color: #ecf0f1;
+  font-weight: bold;
+}
+
+.usage-example h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.usage-example .code-example {
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 1rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+  overflow-x: auto;
+}
+
+.usage-example .code-example pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 @media (max-width: 768px) {
   .back-link {
     position: static;
