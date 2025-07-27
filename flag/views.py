@@ -79,12 +79,11 @@ def cook_feature_flags(request: HttpRequest, body: FlagsBody):
         raise HttpError(404, "Project not found")
 
     environment: Environment = get_environment(project, body.environment)
-    
+
     try:
         entities: list[Entity] = manage_entities(project, body.entities)
     except ValidationError:
         raise HttpError(401, "Invalid entity data")
-    
 
     return []
 
@@ -95,7 +94,11 @@ def manage_entities(project: Project, elist: list[EntityData]) -> list[Entity]:
     for e in elist:
         try:
             entity = Entity.objects.get(project=project, external_id=e.ref_id)
-            updated = entity.name != e.name or entity.tag != e.tag
+            updated = (
+                entity.name != e.name
+                or entity.tag != e.tag
+                or entity.vars != e.variables
+            )
 
             if entity.name != e.name:
                 entity.name = e.name
@@ -103,7 +106,8 @@ def manage_entities(project: Project, elist: list[EntityData]) -> list[Entity]:
             if entity.tag != e.tag:
                 entity.tag = e.tag
 
-            print("Entity vars", entity.vars, type(entity.vars))
+            if entity.vars != e.variables:
+                entity.vars = t.cast(t.Any, e.variables)
 
             if updated:
                 entity.save()
@@ -117,7 +121,7 @@ def manage_entities(project: Project, elist: list[EntityData]) -> list[Entity]:
                 project=project,
                 vars=e.variables,
             )
-            
+
             result.append(entity)
 
     return result
