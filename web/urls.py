@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views
 from .views import auth
 from .views import project
+from .views import secrets
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -11,9 +12,9 @@ urlpatterns = [
     path('projects/<str:id>/', project.project_view, name="project-detail"),
     path('projects/<str:id>/features/', project.project_features_view, name="project-features"),
     path('projects/<str:project_id>/features/new/', project.FeatureCreateView.as_view(), name="create-feature"),
-    path('projects/<str:project_id>/secrets/new/', project.SecretCreateView.as_view(), name="create-secret"),
-    path('projects/<str:project_id>/secrets/created/', project.secret_created_view, name="secret-created"),
-    path('projects/<str:project_id>/secrets/<str:secret_id>/delete/', project.delete_secret_view, name="delete-secret"),
+    path('projects/<str:project_id>/secrets/new/', secrets.SecretCreateView.as_view(), name="create-secret"),
+    path('projects/<str:project_id>/secrets/created/', secrets.secret_created_view, name="secret-created"),
+    path('projects/<str:project_id>/secrets/<str:secret_id>/delete/', secrets.delete_secret_view, name="delete-secret"),
     path('projects/<str:project_id>/environments/new/', project.environment_create_view, name="create-environment"),
     path('projects/<str:project_id>/segments/new/', project.SegmentCreateView.as_view(), name="create-segment"),
     path('projects/<str:project_id>/segments/<str:segment_id>/edit/', project.SegmentEditView.as_view(), name="edit-segment"),
