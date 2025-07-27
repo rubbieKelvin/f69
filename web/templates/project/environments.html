@@ -1,0 +1,66 @@
+{% extends 'project/base.html' %}
+
+{% block project_actions %}
+<a href="#" class="btn btn-primary">Add Environment</a>
+{% endblock %}
+
+{% block content %}
+<div class="environments-tab">
+  <div class="tab-header">
+    <h2>Environments</h2>
+    <p>Manage different environments for your project such as development, staging, and production.</p>
+  </div>
+
+  {% if environments %}
+  <div class="environments-grid">
+    {% for env in environments %}
+    <div class="environment-card">
+      <div class="env-header">
+        <h3>{{ env.name }}</h3>
+        <div class="env-status status-{{ env.status|lower }}">
+          {{ env.get_status_display|default:"Active" }}
+        </div>
+      </div>
+      
+      {% if env.description %}
+      <p class="env-description">{{ env.description }}</p>
+      {% endif %}
+      
+      <div class="env-details">
+        <div class="detail-item">
+          <strong>API Key:</strong>
+          <code class="api-key">{{ env.api_key|slice:":8" }}...</code>
+          <button class="copy-btn" data-key="{{ env.api_key }}">Copy</button>
+        </div>
+        
+        <div class="detail-item">
+          <strong>Created:</strong>
+          {{ env.created_at|date:"M d, Y" }}
+        </div>
+        
+        {% if env.last_used %}
+        <div class="detail-item">
+          <strong>Last Used:</strong>
+          {{ env.last_used|date:"M d, Y H:i" }}
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="env-actions">
+        <button class="btn-small btn-secondary">Configure</button>
+        <button class="btn-small btn-secondary">View Logs</button>
+        <button class="btn-small btn-danger">Delete</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🌍</div>
+    <h3>No environments yet</h3>
+    <p>Create environments to organize your feature flags across different stages of your application lifecycle.</p>
+    <a href="#" class="btn btn-primary">Create Your First Environment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

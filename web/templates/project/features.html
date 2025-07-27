@@ -1,0 +1,93 @@
+{% extends 'project/base.html' %}
+
+{% block project_actions %}
+<a href="#" class="btn btn-primary">Add Feature</a>
+{% endblock %}
+
+{% block content %}
+<div class="features-tab">
+  <div class="tab-header">
+    <h2>Features</h2>
+    <p>Manage feature flags for this project. Features can be enabled or disabled for different segments and environments.</p>
+  </div>
+
+  {% if features %}
+  <div class="features-list">
+    <div class="list-header">
+      <div class="search-bar">
+        <input type="text" placeholder="Search features..." class="search-input">
+      </div>
+      <div class="list-actions">
+        <select class="filter-select">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      {% for feature in features %}
+      <div class="feature-card">
+        <div class="feature-header">
+          <div class="feature-info">
+            <h3>{{ feature.name }}</h3>
+            <p class="feature-slug">{{ feature.slug }}</p>
+            {% if feature.description %}
+            <p class="feature-description">{{ feature.description }}</p>
+            {% endif %}
+          </div>
+          <div class="feature-status">
+            <div class="status-toggle">
+              <input type="checkbox" id="feature-{{ feature.id }}" class="toggle-switch" {% if feature.is_active %}checked{% endif %}>
+              <label for="feature-{{ feature.id }}" class="toggle-label">
+                <span class="toggle-inner"></span>
+                <span class="toggle-switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="feature-meta">
+          <div class="meta-item">
+            <strong>Created:</strong> {{ feature.created_at|date:"M d, Y" }}
+          </div>
+          <div class="meta-item">
+            <strong>By:</strong> {{ feature.author.first_name|default:feature.author.email }}
+          </div>
+          <div class="meta-item">
+            <strong>Updated:</strong> {{ feature.updated_at|date:"M d, Y" }}
+          </div>
+        </div>
+
+        <div class="feature-stats">
+          <div class="stat-item">
+            <span class="stat-label">Environments</span>
+            <span class="stat-value">{{ feature.environments_count|default:0 }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Rules</span>
+            <span class="stat-value">{{ feature.rules_count|default:0 }}</span>
+          </div>
+        </div>
+        
+        <div class="feature-actions">
+          <button class="btn-small btn-secondary">Configure</button>
+          <button class="btn-small btn-secondary">Analytics</button>
+          <button class="btn-small btn-danger">Delete</button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🚩</div>
+    <h3>No features yet</h3>
+    <p>Create your first feature flag to start controlling feature rollouts and experiments.</p>
+    <a href="#" class="btn btn-primary">Create Your First Feature</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

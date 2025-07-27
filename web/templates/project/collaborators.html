@@ -1,0 +1,92 @@
+{% extends 'project/base.html' %}
+
+{% block project_actions %}
+<a href="#" class="btn btn-primary">Invite Collaborator</a>
+{% endblock %}
+
+{% block content %}
+<div class="collaborators-tab">
+  <div class="tab-header">
+    <h2>Collaborators</h2>
+    <p>Manage team members who have access to this project and their permissions.</p>
+  </div>
+
+  {% if collaborators %}
+  <div class="collaborators-list">
+    <div class="list-header">
+      <div class="search-bar">
+        <input type="text" placeholder="Search collaborators..." class="search-input">
+      </div>
+      <div class="list-filters">
+        <select class="filter-select">
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="editor">Editor</option>
+          <option value="viewer">Viewer</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="collaborators-table">
+      <div class="table-header">
+        <div class="th">User</div>
+        <div class="th">Role</div>
+        <div class="th">Added</div>
+        <div class="th">Last Active</div>
+        <div class="th">Actions</div>
+      </div>
+      
+      {% for access in collaborators %}
+      <div class="table-row">
+        <div class="td">
+          <div class="user-info">
+            <div class="user-avatar">
+              {{ access.user.first_name|first|default:access.user.email|first|upper }}
+            </div>
+            <div class="user-details">
+              <strong>{{ access.user.first_name|default:access.user.email }}</strong>
+              {% if access.user.first_name %}
+              <small>{{ access.user.email }}</small>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="td">
+          <span class="role-badge role-{{ access.role|lower }}">
+            {{ access.get_role_display }}
+          </span>
+        </div>
+        <div class="td">
+          {{ access.created_at|date:"M d, Y" }}
+        </div>
+        <div class="td">
+          {% if access.user.last_login %}
+          {{ access.user.last_login|date:"M d, Y" }}
+          {% else %}
+          <span class="text-muted">Never</span>
+          {% endif %}
+        </div>
+        <div class="td">
+          <div class="action-buttons">
+            {% if access.user != project.author %}
+            <button class="btn-small btn-secondary">Change Role</button>
+            <button class="btn-small btn-danger">Remove</button>
+            {% else %}
+            <span class="text-muted">Owner</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">👥</div>
+    <h3>No collaborators yet</h3>
+    <p>Invite team members to collaborate on this project and manage feature flags together.</p>
+    <a href="#" class="btn btn-primary">Invite Your First Collaborator</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

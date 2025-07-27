@@ -5,11 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
+      {% block title %}
       {% if project %}{{ project.name }}{% else %}Project Not Found{% endif %} -
       F69
+      {% endblock %}
     </title>
     <link rel="stylesheet" href="{% static 'web/main.css' %}" />
     <link rel="stylesheet" href="{% static 'web/project.css' %}" />
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
     <header class="header">
@@ -50,12 +53,48 @@
               >Created {{ project.created_at|date:"M d, Y" }}</span
             >
             <span class="meta-item">
-              By{{ project.author.first_name|default:project.author.email }}
+              By {{ project.author.first_name|default:project.author.email }}
             </span>
           </div>
         </div>
         <div class="project-actions">
+          {% block project_actions %}
           <a href="#" class="btn btn-secondary">Add new feature</a>
+          {% endblock %}
+        </div>
+      </div>
+
+      <!-- Project Tabs -->
+      <div class="project-tabs">
+        <nav class="tab-nav">
+          <a href="{% url 'project-detail' project.id %}" 
+             class="tab-link {% if current_tab == 'overview' %}active{% endif %}">
+            Overview
+          </a>
+          <a href="{% url 'project-features' project.id %}" 
+             class="tab-link {% if current_tab == 'features' %}active{% endif %}">
+            Features
+          </a>
+          <a href="{% url 'project-entities' project.id %}" 
+             class="tab-link {% if current_tab == 'entities' %}active{% endif %}">
+            Entities
+          </a>
+          <a href="{% url 'project-environments' project.id %}" 
+             class="tab-link {% if current_tab == 'environments' %}active{% endif %}">
+            Environments
+          </a>
+          <a href="{% url 'project-segments' project.id %}" 
+             class="tab-link {% if current_tab == 'segments' %}active{% endif %}">
+            Segments
+          </a>
+          <a href="{% url 'project-collaborators' project.id %}" 
+             class="tab-link {% if current_tab == 'collaborators' %}active{% endif %}">
+            Collaborators
+          </a>
+        </nav>
+
+        <div class="tab-content">
+          {% block content %}{% endblock %}
         </div>
       </div>
 
@@ -71,5 +110,7 @@
       </div>
       {% endif %}
     </div>
+
+    {% block extra_js %}{% endblock %}
   </body>
-</html>
+</html> 
