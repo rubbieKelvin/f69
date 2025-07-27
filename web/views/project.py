@@ -15,6 +15,7 @@ from flag.models import (
     ProjectAccess,
     Entity,
     Segment,
+    Feature,
     ProjectClientSecret,
     Environment,
 )

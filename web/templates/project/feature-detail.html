@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ feature.name }} - {{ project.name }} - F69</title>
+    <link rel="stylesheet" href="{% static 'web/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'web/project.css' %}" />
+</head>
+<body class="feature-detail-body">
+    <header class="feature-page-header">
+        <div class="header-container">
+            <div class="header-top">
+                <a href="{% url 'project-features' project.id %}" class="back-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Back to Features
+                </a>
+                                 <div class="header-actions">
+                     <button id="save-changes-btn" class="btn btn-primary" style="display: none;">Save Changes</button>
+                     <button class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this feature?')">Delete Feature</button>
+                 </div>
+            </div>
+            
+            <div class="header-main">
+                <div class="breadcrumb">
+                    <a href="{% url 'home' %}">Projects</a>
+                    <span class="separator">·</span>
+                    <a href="{% url 'project-detail' project.id %}">{{ project.name }}</a>
+                    <span class="separator">·</span>
+                    <a href="{% url 'project-features' project.id %}">Features</a>
+                    <span class="separator">·</span>
+                    <span class="current">{{ feature.name }}</span>
+                </div>
+                
+                                 <div class="feature-header-content">
+                     <div class="feature-title-area">
+                         <div class="editable-title">
+                             <h1 class="feature-title" id="feature-name-display">{{ feature.name }}</h1>
+                             <input type="text" id="feature-name-input" class="feature-title-input" value="{{ feature.name }}" style="display: none;">
+                         </div>
+                         <div class="feature-meta">
+                             <div class="editable-slug">
+                                 <span class="feature-slug" id="feature-slug-display">{{ feature.slug }}</span>
+                                 <input type="text" id="feature-slug-input" class="feature-slug-input" value="{{ feature.slug }}" style="display: none;">
+                             </div>
+                             <div class="feature-status">
+                                 <div class="status-toggle">
+                                     <input type="checkbox" id="feature-status" class="toggle-switch" {% if feature.is_active %}checked{% endif %}>
+                                     <label for="feature-status" class="toggle-label">
+                                         <span class="toggle-switch-slider"></span>
+                                     </label>
+                                     <span class="status-text">{% if feature.is_active %}Active{% else %}Inactive{% endif %}</span>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="feature-content">
+        <div class="content-container">
+
+  {% if feature.description %}
+  <div class="feature-description-section">
+    <h3>Description</h3>
+    <p>{{ feature.description }}</p>
+  </div>
+  {% endif %}
+
+  <div class="feature-details-grid">
+    <div class="detail-card">
+      <h3>Feature Information</h3>
+      <div class="detail-row">
+        <span class="detail-label">Created:</span>
+        <span class="detail-value">{{ feature.created_at|date:"M d, Y H:i" }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Updated:</span>
+        <span class="detail-value">{{ feature.updated_at|date:"M d, Y H:i" }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Author:</span>
+        <span class="detail-value">{{ feature.author.first_name|default:feature.author.email }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-configuration">
+    <h3>Configuration</h3>
+    <div class="config-section">
+      <h4>Default Value</h4>
+      <p class="config-description">The default value returned when this feature flag is evaluated.</p>
+      <div class="config-value">
+        <code>{% if feature.is_active %}true{% else %}false{% endif %}</code>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <h4>Targeting Rules</h4>
+      <p class="config-description">Rules that determine when this feature should be enabled for specific users or segments.</p>
+      <div class="empty-state-small">
+        <p>No targeting rules configured yet.</p>
+        <button class="btn btn-secondary btn-small">Add Targeting Rule</button>
+      </div>
+    </div>
+  </div>
+        </div>
+    </main>
+
+<script>
+  let originalName = '{{ feature.name }}';
+  let originalSlug = '{{ feature.slug }}';
+  let hasChanges = false;
+
+  // Make title editable on click
+  document.getElementById('feature-name-display').addEventListener('click', function() {
+    document.getElementById('feature-name-display').style.display = 'none';
+    document.getElementById('feature-name-input').style.display = 'block';
+    document.getElementById('feature-name-input').focus();
+  });
+
+  // Make slug editable on click
+  document.getElementById('feature-slug-display').addEventListener('click', function() {
+    document.getElementById('feature-slug-display').style.display = 'none';
+    document.getElementById('feature-slug-input').style.display = 'block';
+    document.getElementById('feature-slug-input').focus();
+  });
+
+  // Handle name input changes
+  document.getElementById('feature-name-input').addEventListener('blur', function() {
+    const newName = this.value.trim();
+    if (newName) {
+      document.getElementById('feature-name-display').textContent = newName;
+      checkForChanges();
+    }
+    document.getElementById('feature-name-display').style.display = 'block';
+    document.getElementById('feature-name-input').style.display = 'none';
+  });
+
+  document.getElementById('feature-name-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      this.blur();
+    }
+  });
+
+  // Handle slug input changes
+  document.getElementById('feature-slug-input').addEventListener('blur', function() {
+    const newSlug = this.value.trim();
+    if (newSlug) {
+      document.getElementById('feature-slug-display').textContent = newSlug;
+      checkForChanges();
+    }
+    document.getElementById('feature-slug-display').style.display = 'block';
+    document.getElementById('feature-slug-input').style.display = 'none';
+  });
+
+  document.getElementById('feature-slug-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      this.blur();
+    }
+  });
+
+  // Check if changes have been made
+  function checkForChanges() {
+    const currentName = document.getElementById('feature-name-display').textContent;
+    const currentSlug = document.getElementById('feature-slug-display').textContent;
+    
+    hasChanges = (currentName !== originalName || currentSlug !== originalSlug);
+    
+    const saveBtn = document.getElementById('save-changes-btn');
+    if (hasChanges) {
+      saveBtn.style.display = 'inline-block';
+    } else {
+      saveBtn.style.display = 'none';
+    }
+  }
+
+  // Save changes
+  document.getElementById('save-changes-btn').addEventListener('click', function() {
+    const currentName = document.getElementById('feature-name-display').textContent;
+    const currentSlug = document.getElementById('feature-slug-display').textContent;
+    
+    // Here you would make an AJAX call to save the changes
+    console.log('Saving changes:', { name: currentName, slug: currentSlug });
+    
+    // For now, just update the originals and hide the save button
+    originalName = currentName;
+    originalSlug = currentSlug;
+    hasChanges = false;
+    this.style.display = 'none';
+    
+    // Show a success message (you could add a toast notification here)
+    alert('Changes saved successfully!');
+  });
+
+  // Toggle switch functionality
+  document.getElementById('feature-status').addEventListener('change', function() {
+    const statusText = document.querySelector('.status-text');
+    if (this.checked) {
+      statusText.textContent = 'Active';
+    } else {
+      statusText.textContent = 'Inactive';
+    }
+    
+    // Here you would typically make an AJAX call to update the feature status
+    console.log('Feature status changed to:', this.checked ? 'Active' : 'Inactive');
+  });
+  </script>
+    </div>
+</body>
+</html> 

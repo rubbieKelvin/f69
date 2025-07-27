@@ -4,6 +4,7 @@ from . import views
 from .views import auth
 from .views import project
 from .views import secrets
+from .views import features
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -11,6 +12,7 @@ urlpatterns = [
     path('projects/new/', project.ProjectCreateView.as_view(), name="create-project"),
     path('projects/<str:id>/', project.project_view, name="project-detail"),
     path('projects/<str:id>/features/', project.project_features_view, name="project-features"),
+    path('projects/<str:project_id>/features/<str:feature_id>/', features.feature_detail_view, name="feature-detail"),
     path('projects/<str:project_id>/features/new/', project.FeatureCreateView.as_view(), name="create-feature"),
     path('projects/<str:project_id>/secrets/new/', secrets.SecretCreateView.as_view(), name="create-secret"),
     path('projects/<str:project_id>/secrets/created/', secrets.secret_created_view, name="secret-created"),

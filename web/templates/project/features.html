@@ -39,7 +39,7 @@
       <div class="table-row">
         <div class="td">
           <div class="feature-info">
-            <strong>{{ feature.name }}</strong>
+            <strong><a href="{% url 'feature-detail' project.id feature.id %}" class="feature-link">{{ feature.name }}</a></strong>
             <div class="feature-slug">{{ feature.slug }}</div>
           </div>
         </div>

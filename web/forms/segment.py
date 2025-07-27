@@ -35,7 +35,7 @@ class SegmentEditForm(forms.ModelForm):
     """Form for editing segments with entity management"""
 
     entities = forms.ModelMultipleChoiceField(
-        queryset=Entity.objects.none(),
+        queryset=Entity.objects.none(), # initialy set this to none. we'd update this with the project's entities later
         widget=forms.CheckboxSelectMultiple(attrs={"class": "entity-checkbox-list"}),
         required=False,
         help_text="Select entities to include in this segment",
