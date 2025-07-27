@@ -52,8 +52,10 @@
         </div>
         <div class="td">
           <div class="action-buttons">
-            <button class="btn-small btn-secondary">Edit</button>
-            <button class="btn-small btn-danger">Delete</button>
+            <form method="post" action="{% url 'delete-entity' project.id entity.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-small btn-danger" onclick="return confirm('Are you sure you want to delete this entity? This action cannot be undone.')">Delete</button>
+            </form>
           </div>
         </div>
       </div>

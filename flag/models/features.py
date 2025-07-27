@@ -1,7 +1,11 @@
 import uuid
+import typing as t
 from django.db import models
+from django.db.models.manager import Manager
 from django.conf import settings
 
+if t.TYPE_CHECKING:
+    from .flags import Flag
 
 class Feature(models.Model):
     """This is the feature to be flagged. it belongs directly to a project"""
@@ -16,6 +20,9 @@ class Feature(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # related name
+    values: 'Manager[Flag]'
 
     class Meta:
         unique_together = ("project", "slug")
