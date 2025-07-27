@@ -1,0 +1,72 @@
+{% extends 'project/base.html' %}
+
+{% block project_actions %}
+<a href="#" class="btn btn-primary">Create Segment</a>
+{% endblock %}
+
+{% block content %}
+<div class="segments-tab">
+  <div class="tab-header">
+    <h2>Segments</h2>
+    <p>Create and manage segments to group entities together. Segments help you target specific groups with your feature flags.</p>
+  </div>
+
+  {% if segments %}
+  <div class="segments-list">
+    {% for segment in segments %}
+    <div class="segment-card">
+      <div class="segment-header">
+        <div class="segment-info">
+          <h3>{{ segment.name }}</h3>
+          {% if segment.description %}
+          <p class="segment-description">{{ segment.description }}</p>
+          {% endif %}
+        </div>
+        <div class="segment-stats">
+          <span class="entity-count">{{ segment.entities.count }} entities</span>
+        </div>
+      </div>
+      
+      <div class="segment-entities">
+        {% if segment.entities.exists %}
+        <div class="entities-preview">
+          <h4>Entities in this segment:</h4>
+          <div class="entity-chips">
+            {% for entity in segment.entities.all|slice:":5" %}
+            <span class="entity-chip">{{ entity.name }}</span>
+            {% endfor %}
+            {% if segment.entities.count > 5 %}
+            <span class="entity-chip more">+{{ segment.entities.count|add:"-5" }} more</span>
+            {% endif %}
+          </div>
+        </div>
+        {% else %}
+        <div class="no-entities">
+          <p>No entities assigned to this segment yet.</p>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="segment-meta">
+        <span class="meta-item">Created {{ segment.created_at|date:"M d, Y" }}</span>
+        <span class="meta-item">Updated {{ segment.updated_at|date:"M d, Y" }}</span>
+      </div>
+      
+      <div class="segment-actions">
+        <button class="btn-small btn-secondary">Edit</button>
+        <button class="btn-small btn-secondary">Manage Entities</button>
+        <button class="btn-small btn-danger">Delete</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🎯</div>
+    <h3>No segments yet</h3>
+    <p>Create segments to group entities together and target them with specific feature flag configurations.</p>
+    <a href="#" class="btn btn-primary">Create Your First Segment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 
