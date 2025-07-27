@@ -1006,14 +1006,14 @@
 
 .features-table .table-header {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
   background: #f8f9fa;
   border-bottom: 1px solid #ecf0f1;
 }
 
 .features-table .table-row {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
   border-bottom: 1px solid #ecf0f1;
   transition: background-color 0.2s ease;
 }
@@ -1087,4 +1087,29 @@
   transform: translateX(18px);
 }
 
+/* Environments specific styles */
+.environments-tab {
+  padding: 0;
+}
+
+.environments-list {
+  margin-top: 1.5rem;
+}
+
+.environment-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #ecf0f1;
+  display: flex;
+  align-items: center;
+}
+
+.environment-item:last-child {
+  border-bottom: none;
+}
+
+.env-name {
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
  

@@ -17,6 +17,7 @@ from flag.models import (
     Segment,
     Feature,
     ProjectClientSecret,
+    Environment,
 )
 from flag.models.access import Role
 
@@ -45,6 +46,18 @@ class ProjectCreateView(LoginRequiredMixin, View):
             ProjectAccess.objects.create(
                 user=request.user,
                 role=Role.ADMIN,
+                project=project,
+            )
+
+            # Create environment
+            Environment.objects.create(
+                name="Production",
+                project=project,
+            )
+
+            # Create environment
+            Environment.objects.create(
+                name="Staging",
                 project=project,
             )
 
@@ -177,9 +190,8 @@ def project_environments_view(request: HttpRequest, id: str) -> HttpResponse:
             {"project": project, "current_tab": "environments"},
         )
 
-    # For now, environments will be empty since there's no environment model yet
-    # This can be updated when the environment model is created
-    environments = []
+    # Get project environments
+    environments = project.environments.all().order_by('-created_at')
 
     context = {
         "project": project,
@@ -249,7 +261,11 @@ def project_collaborators_view(request: HttpRequest, id: str) -> HttpResponse:
 
 
 def project_api_view(request: HttpRequest, id: str) -> HttpResponse:
-    api_url = "http://127.0.0.1:8000/f/flags" if settings.DEBUG else "https://api.f69.dev/f/flags"
+    api_url = (
+        "http://127.0.0.1:8000/f/flags"
+        if settings.DEBUG
+        else "https://api.f69.dev/f/flags"
+    )
     user = t.cast(User, request.user)
 
     try:
@@ -281,20 +297,22 @@ def project_api_view(request: HttpRequest, id: str) -> HttpResponse:
         "project": project,
         "current_tab": "api",
         "secrets": secrets,
-        "api_url": api_url
+        "api_url": api_url,
     }
 
     return render(request, "project/api.html", context)
 
 
-def delete_secret_view(request: HttpRequest, project_id: str, secret_id: str) -> HttpResponse:
+def delete_secret_view(
+    request: HttpRequest, project_id: str, secret_id: str
+) -> HttpResponse:
     """View to delete/revoke an API secret"""
     user = t.cast(User, request.user)
-    
-    if request.method != 'POST':
+
+    if request.method != "POST":
         messages.error(request, "Invalid request method")
         return redirect("project-api", id=project_id)
-    
+
     # Get the project and verify access
     try:
         project = Project.objects.filter(access__user__id=user.id).get(id=project_id)
@@ -304,20 +322,22 @@ def delete_secret_view(request: HttpRequest, project_id: str, secret_id: str) ->
     except ValidationError:
         messages.error(request, "Invalid project ID")
         return redirect("home")
-    
+
     # Get the secret and verify it belongs to this project
     try:
         secret = ProjectClientSecret.objects.get(id=secret_id, project=project)
         secret_name = secret.name
         secret.delete()
-        messages.success(request, f'API secret "{secret_name}" has been revoked successfully.')
+        messages.success(
+            request, f'API secret "{secret_name}" has been revoked successfully.'
+        )
     except ProjectClientSecret.DoesNotExist:
         messages.error(request, "Secret not found or access denied")
     except ValidationError:
         messages.error(request, "Invalid secret ID")
     except Exception as e:
         messages.error(request, "An error occurred while revoking the secret")
-    
+
     return redirect("project-api", id=project_id)
 
 
@@ -509,3 +529,9 @@ class FeatureCreateView(LoginRequiredMixin, View):
                 "title": f"Create Feature Flag - {project.name}",
             },
         )
+
+
+def environment_create_view(request: HttpRequest, project_id: str) -> HttpResponse:
+    """Placeholder view for creating environments - to be implemented"""
+    messages.info(request, "Environment creation is coming soon!")
+    return redirect("project-environments", id=project_id)

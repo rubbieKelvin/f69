@@ -30,7 +30,6 @@
     <div class="features-table">
       <div class="table-header">
         <div class="th">Feature</div>
-        <div class="th">Status</div>
         <div class="th">Created</div>
         <div class="th">Author</div>
         <div class="th">Updated</div>
@@ -44,14 +43,7 @@
             <div class="feature-slug">{{ feature.slug }}</div>
           </div>
         </div>
-        <div class="td">
-          <div class="status-toggle">
-            <input type="checkbox" id="feature-{{ feature.id }}" class="toggle-switch" {% if feature.is_active %}checked{% endif %}>
-            <label for="feature-{{ feature.id }}" class="toggle-label">
-              <span class="toggle-switch-slider"></span>
-            </label>
-          </div>
-        </div>
+
         <div class="td">
           {{ feature.created_at|date:"M d, Y" }}
         </div>
