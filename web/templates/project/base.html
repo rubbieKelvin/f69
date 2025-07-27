@@ -91,6 +91,10 @@
              class="tab-link {% if current_tab == 'collaborators' %}active{% endif %}">
             Collaborators
           </a>
+          <a href="{% url 'project-api' project.id %}" 
+             class="tab-link {% if current_tab == 'api' %}active{% endif %}">
+            API
+          </a>
         </nav>
 
         <div class="tab-content">

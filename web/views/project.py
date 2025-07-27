@@ -5,9 +5,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from web.forms.project import ProjectCreateForm
+from web.forms.feature import FeatureCreateForm
 import typing as t
 from account.models import User
-from flag.models import Project, ProjectAccess, Entity, Segment, Feature
+from flag.models import Project, ProjectAccess, Entity, Segment, Feature, ProjectClientSecret
 from flag.models.access import Role
 
 
@@ -64,9 +65,9 @@ def project_view(request: HttpRequest, id: str) -> HttpResponse:
         return render(request, "project/overview.html", {"project": project, "current_tab": "overview"})
     
     # Get overview data
-    features = project.feature_set.all()
-    entities = project.entity_set.all()
-    segments = project.segment_set.all()
+    features = project.features.all()
+    entities = project.entities.all()
+    segments = project.segments.all()
     collaborators = project.access.all()
     
     context = {
@@ -97,7 +98,7 @@ def project_features_view(request: HttpRequest, id: str) -> HttpResponse:
     if not project:
         return render(request, "project/features.html", {"project": project, "current_tab": "features"})
 
-    features = project.feature_set.all().order_by('-created_at')
+    features = project.features.all().order_by('-created_at')
     
     context = {
         "project": project,
@@ -123,7 +124,7 @@ def project_entities_view(request: HttpRequest, id: str) -> HttpResponse:
     if not project:
         return render(request, "project/entities.html", {"project": project, "current_tab": "entities"})
 
-    entities = project.entity_set.all().order_by('-created_at')
+    entities = project.entities.all().order_by('-created_at')
     entity_tags = entities.values_list('tag', flat=True).distinct()
     
     context = {
@@ -179,7 +180,7 @@ def project_segments_view(request: HttpRequest, id: str) -> HttpResponse:
     if not project:
         return render(request, "project/segments.html", {"project": project, "current_tab": "segments"})
 
-    segments = project.segment_set.all().order_by('-created_at')
+    segments = project.segments.all().order_by('-created_at')
     
     context = {
         "project": project,
@@ -214,3 +215,100 @@ def project_collaborators_view(request: HttpRequest, id: str) -> HttpResponse:
     }
     
     return render(request, "project/collaborators.html", context)
+
+
+def project_api_view(request: HttpRequest, id: str) -> HttpResponse:
+    """Project API tab"""
+    user = t.cast(User, request.user)
+
+    try:
+        project = Project.objects.filter(access__user__id=user.id).get(id=id)
+    except Project.DoesNotExist:
+        project = None
+    except ValidationError:
+        messages.error(request, "Invalid id")
+        project = None
+
+    if not project:
+        return render(request, "project/api.html", {"project": project, "current_tab": "api"})
+
+    # Get project secrets
+    secrets = ProjectClientSecret.objects.filter(project=project).order_by('-created_at')
+    
+    context = {
+        "client_id": user.id,
+        "project": project,
+        "current_tab": "api",
+        "secrets": secrets,
+    }
+    
+    return render(request, "project/api.html", context)
+
+
+class FeatureCreateView(LoginRequiredMixin, View):
+    """View for creating a new feature flag"""
+
+    def get(self, request: HttpRequest, project_id: str) -> HttpResponse:
+        user = t.cast(User, request.user)
+        
+        # Get the project and verify access
+        try:
+            project = Project.objects.filter(access__user__id=user.id).get(id=project_id)
+        except Project.DoesNotExist:
+            messages.error(request, "Project not found or access denied")
+            return redirect("home")
+        except ValidationError:
+            messages.error(request, "Invalid project ID")
+            return redirect("home")
+        
+        form = FeatureCreateForm()
+        return render(
+            request,
+            "project/create-feature.html",
+            {
+                "form": form, 
+                "project": project,
+                "title": f"Create Feature Flag - {project.name}"
+            },
+        )
+
+    def post(self, request: HttpRequest, project_id: str) -> HttpResponse:
+        user = t.cast(User, request.user)
+        
+        # Get the project and verify access
+        try:
+            project = Project.objects.filter(access__user__id=user.id).get(id=project_id)
+        except Project.DoesNotExist:
+            messages.error(request, "Project not found or access denied")
+            return redirect("home")
+        except ValidationError:
+            messages.error(request, "Invalid project ID")
+            return redirect("home")
+        
+        form = FeatureCreateForm(request.POST)
+
+        if form.is_valid():
+            feature = form.save(commit=False)
+            feature.project = project
+            feature.author = user
+            
+            try:
+                feature.save()
+                messages.success(request, f'Feature "{feature.name}" created successfully!')
+                return redirect("project-features", id=project.id)
+            except Exception as e:
+                # Handle unique constraint errors or other database issues
+                if "unique" in str(e).lower():
+                    form.add_error('slug', 'A feature with this slug already exists in this project.')
+                else:
+                    messages.error(request, 'An error occurred while creating the feature.')
+
+        return render(
+            request,
+            "project/create-feature.html",
+            {
+                "form": form, 
+                "project": project,
+                "title": f"Create Feature Flag - {project.name}"
+            },
+        )
