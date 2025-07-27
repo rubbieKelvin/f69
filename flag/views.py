@@ -78,6 +78,9 @@ def cook_feature_flags(request: HttpRequest, body: FlagsBody):
         # return 404, ErrorResponse(message="Project not foiund")
         raise HttpError(404, "Project not found")
 
+    if not check_entity_tags_are_unique_for_the_request(project, body.entities):
+        raise HttpError(401, "Entity tags must be unique")
+
     environment: Environment = get_environment(project, body.environment)
 
     try:
@@ -86,6 +89,13 @@ def cook_feature_flags(request: HttpRequest, body: FlagsBody):
         raise HttpError(401, "Invalid entity data")
 
     return []
+
+
+def check_entity_tags_are_unique_for_the_request(
+    project: Project, elist: list[EntityData]
+) -> bool:
+    tags = [e.tag for e in elist]
+    return len(tags) == len(set(tags))
 
 
 def manage_entities(project: Project, elist: list[EntityData]) -> list[Entity]:
