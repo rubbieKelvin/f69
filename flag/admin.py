@@ -7,6 +7,7 @@ from .models import (
     Segment,
     ProjectAccess,
     ProjectClientSecret,
+    Environment,
 )
 
 
@@ -36,3 +37,7 @@ class ProjectAccessAdmin(admin.ModelAdmin): ...
 
 @admin.register(ProjectClientSecret)
 class ProjectClientSecretAdmin(admin.ModelAdmin): ...
+
+
+@admin.register(Environment)
+class EnvironmentAdmin(admin.ModelAdmin): ...

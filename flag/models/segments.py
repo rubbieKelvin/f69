@@ -10,7 +10,9 @@ class Segment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=225)
     description = models.CharField(max_length=1000, blank=True, default="")
-    project = models.ForeignKey("flag.Project", on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        "flag.Project", on_delete=models.CASCADE, related_name="segments"
+    )
     entities = models.ManyToManyField("flag.Entity", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

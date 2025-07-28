@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - F69</title>
+    <link rel="stylesheet" href="{% static 'web/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'web/project-form.css' %}" />
+</head>
+<body class="edit-segment-body">
+    <div class="page-header">
+        <a href="{% url 'project-segments' project.id %}" class="back-link">← Back to Segments</a>
+        <div class="page-title-section">
+            <h1 class="page-title">{{ title }}</h1>
+            <p class="page-subtitle">Edit segment for <strong>{{ project.name }}</strong></p>
+        </div>
+    </div>
+    
+    <div class="page-container">
+        <form method="post" class="segment-form">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="error-container">
+                    <h3>Please correct the following errors:</h3>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <div class="error-item">{{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="form-layout">
+                <div class="form-left">
+                    <div class="form-section">
+                        <h3 class="section-title">Segment Details</h3>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                Segment Name <span class="required">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.help_text %}
+                                <div class="form-help">{{ form.name.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                Description
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.help_text %}
+                                <div class="form-help">{{ form.description.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-right">
+                    <div class="form-section">
+                        <h3 class="section-title">Entity Management</h3>
+                        <p class="section-subtitle">Select which entities should be included in this segment</p>
+                        
+                        {% if project.entities.exists %}
+                            <div class="form-group">
+                                <label class="form-label">Search Entities</label>
+                                <input type="text" id="entity-search" class="form-input" placeholder="Search by name, tag, or external ID...">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Entities</label>
+                                <div class="entity-selection-container">
+                                    {% for entity in project.entities.all %}
+                                    <div class="entity-item" data-name="{{ entity.name|lower }}" data-tag="{{ entity.tag|lower }}" data-external-id="{{ entity.external_id|lower }}">
+                                        <input type="checkbox" 
+                                               name="entities" 
+                                               value="{{ entity.id }}" 
+                                               id="entity_{{ entity.id }}"
+                                               {% if entity in segment.entities.all %}checked{% endif %}>
+                                        <label for="entity_{{ entity.id }}" class="entity-label">
+                                            <div class="entity-info">
+                                                <div class="entity-name">{{ entity.name }}</div>
+                                                <div class="entity-details">
+                                                    <span class="entity-tag">{{ entity.tag }}</span>
+                                                    <span class="entity-external-id">{{ entity.external_id }}</span>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div id="no-entities-found" class="no-entities-message" style="display: none;">
+                                    <p>No entities match your search criteria.</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="no-entities-message">
+                                <p>No entities available in this project yet.</p>
+                                <a href="{% url 'project-entities' project.id %}" class="btn btn-small btn-secondary">Manage Entities</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Update Segment</button>
+                <a href="{% url 'project-segments' project.id %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('entity-search');
+            const entityItems = document.querySelectorAll('.entity-item');
+            const noEntitiesFound = document.getElementById('no-entities-found');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    let visibleCount = 0;
+                    
+                    entityItems.forEach(function(item) {
+                        const name = item.getAttribute('data-name');
+                        const tag = item.getAttribute('data-tag');
+                        const externalId = item.getAttribute('data-external-id');
+                        
+                        const matches = name.includes(searchTerm) || 
+                                       tag.includes(searchTerm) || 
+                                       externalId.includes(searchTerm);
+                        
+                        if (matches) {
+                            item.style.display = 'block';
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide no results message
+                    if (visibleCount === 0 && searchTerm !== '') {
+                        noEntitiesFound.style.display = 'block';
+                    } else {
+                        noEntitiesFound.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

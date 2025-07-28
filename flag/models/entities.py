@@ -16,11 +16,13 @@ class Entity(models.Model):
         help_text="This is the entity type, could be anything described by the client; eg: user, organisation, workspace",
     )
     external_id = models.UUIDField(help_text="This is the entity id from the client")
-    project = models.ForeignKey("flag.Project", on_delete=models.CASCADE)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        "flag.Project", on_delete=models.CASCADE, related_name="entities"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    vars = models.JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "entities"
+        unique_together = [['external_id', 'project']]

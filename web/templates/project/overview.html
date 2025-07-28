@@ -1,0 +1,64 @@
+{% extends 'project/base.html' %}
+
+{% block content %}
+<div class="project-overview">
+  <div class="overview-section">
+    <h2>Project Overview</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ features_count|default:0 }}</div>
+        <div class="stat-label">Features</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ entities_count|default:0 }}</div>
+        <div class="stat-label">Entities</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ segments_count|default:0 }}</div>
+        <div class="stat-label">Segments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ collaborators_count|default:0 }}</div>
+        <div class="stat-label">Collaborators</div>
+      </div>
+    </div>
+  </div>
+
+  {% if recent_features %}
+  <div class="overview-section">
+    <h3>Recent Features</h3>
+    <div class="feature-list">
+      {% for feature in recent_features %}
+      <div class="feature-item">
+        <div class="feature-info">
+          <h4>{{ feature.name }}</h4>
+          <p>{{ feature.description|default:"No description" }}</p>
+        </div>
+        <div class="feature-status">
+          <span class="status-badge status-{{ feature.status|lower }}">
+            {{ feature.get_status_display }}
+          </span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if recent_activity %}
+  <div class="overview-section">
+    <h3>Recent Activity</h3>
+    <div class="activity-list">
+      {% for activity in recent_activity %}
+      <div class="activity-item">
+        <div class="activity-info">
+          <p>{{ activity.description }}</p>
+          <small>{{ activity.created_at|date:"M d, Y H:i" }}</small>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

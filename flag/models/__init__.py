@@ -4,3 +4,4 @@ from .entities import Entity
 from .segments import Segment
 from .flags import Flag
 from .access import ProjectAccess
+from .environment import Environment

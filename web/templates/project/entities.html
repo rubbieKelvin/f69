@@ -1,0 +1,74 @@
+{% extends 'project/base.html' %}
+
+{% block project_actions %}
+<a href="#" class="btn btn-primary">Add Entity</a>
+{% endblock %}
+
+{% block content %}
+<div class="entities-tab">
+  <div class="tab-header">
+    <h2>Entities</h2>
+    <p>Manage entities that belong to this project. Entities can be users, organizations, or any other resource you want to target with your feature flags.</p>
+  </div>
+
+  {% if entities %}
+  <div class="entities-list">
+    <div class="list-header">
+      <div class="search-bar">
+        <input type="text" placeholder="Search entities..." class="search-input">
+      </div>
+      <div class="list-actions">
+        <select class="filter-select">
+          <option value="">All Types</option>
+          {% for tag in entity_tags %}
+          <option value="{{ tag }}">{{ tag|title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="entities-table">
+      <div class="table-header">
+        <div class="th">Name</div>
+        <div class="th">Type</div>
+        <div class="th">External ID</div>
+        <div class="th">Created</div>
+        <div class="th">Actions</div>
+      </div>
+      
+      {% for entity in entities %}
+      <div class="table-row">
+        <div class="td">
+          <strong>{{ entity.name }}</strong>
+        </div>
+        <div class="td">
+          <span class="entity-tag">{{ entity.tag }}</span>
+        </div>
+        <div class="td">
+          <code>{{ entity.external_id }}</code>
+        </div>
+        <div class="td">
+          {{ entity.created_at|date:"M d, Y" }}
+        </div>
+        <div class="td">
+          <div class="action-buttons">
+            <form method="post" action="{% url 'delete-entity' project.id entity.id %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-small btn-danger" onclick="return confirm('Are you sure you want to delete this entity? This action cannot be undone.')">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">👥</div>
+    <h3>No entities yet</h3>
+    <p>Start by adding entities to your project. These could be users, organizations, or any other resources you want to target.</p>
+    <a href="#" class="btn btn-primary">Add Your First Entity</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

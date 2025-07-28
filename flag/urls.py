@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import cook_feature_flags
+from .views import api
 
 urlpatterns = [
-    path("<id>/", cook_feature_flags, name="generate-feature-flags"),
+    path("", api.urls),
 ]
