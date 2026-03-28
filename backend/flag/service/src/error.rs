@@ -1,3 +1,5 @@
+//! JSON API errors for flag routes.
+
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -5,6 +7,7 @@ use axum::{
 };
 use serde::Serialize;
 
+/// Stable JSON error shape for clients.
 #[derive(Debug, Serialize)]
 pub struct ErrorBody {
     pub error: String,
@@ -12,6 +15,7 @@ pub struct ErrorBody {
     pub code: Option<&'static str>,
 }
 
+/// HTTP-level failures for flag APIs (includes authz).
 #[derive(Debug)]
 pub enum ApiError {
     BadRequest(&'static str),

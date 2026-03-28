@@ -1,3 +1,5 @@
+//! `/v1/projects` and nested flags; all routes require a valid Bearer JWT.
+
 use axum::extract::{Path, State};
 use axum::Json;
 use sea_orm::{
@@ -25,6 +27,7 @@ pub struct CreateProjectRequest {
     pub name: String,
 }
 
+/// List projects owned by the JWT subject.
 pub async fn list_projects(
     AuthUser { user_id: user }: AuthUser,
     State(state): State<AppState>,
@@ -45,6 +48,7 @@ pub async fn list_projects(
     Ok(Json(out))
 }
 
+/// Create a project; owner is the JWT subject.
 pub async fn create_project(
     AuthUser { user_id: user }: AuthUser,
     State(state): State<AppState>,
@@ -85,6 +89,7 @@ pub struct CreateFlagRequest {
     pub enabled: bool,
 }
 
+/// List flags under a project (403 if the caller does not own the project).
 pub async fn list_flags(
     AuthUser { user_id: user }: AuthUser,
     State(state): State<AppState>,
@@ -115,6 +120,7 @@ pub async fn list_flags(
     Ok(Json(out))
 }
 
+/// Create a flag key under a project (403 if not owner).
 pub async fn create_flag(
     AuthUser { user_id: user }: AuthUser,
     State(state): State<AppState>,

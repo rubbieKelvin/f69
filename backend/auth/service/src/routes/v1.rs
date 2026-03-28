@@ -1,3 +1,5 @@
+//! Versioned public API: registration and token issuance.
+
 use axum::{extract::State, Json};
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, Set};
 use serde::{Deserialize, Serialize};
@@ -35,6 +37,7 @@ pub struct LoginResponse {
     pub expires_in: u64,
 }
 
+/// Create a user; password is stored as an Argon2 hash.
 pub async fn register(
     State(state): State<AppState>,
     Json(body): Json<RegisterRequest>,
@@ -69,6 +72,7 @@ pub async fn register(
     }))
 }
 
+/// Exchange credentials for a short-lived Bearer access token.
 pub async fn login(
     State(state): State<AppState>,
     Json(body): Json<LoginRequest>,

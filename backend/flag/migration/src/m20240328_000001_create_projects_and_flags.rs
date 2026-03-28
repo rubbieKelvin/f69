@@ -1,3 +1,5 @@
+//! Projects and feature flags with a composite unique index on `(project_id, key)`.
+
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]

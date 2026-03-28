@@ -1,10 +1,16 @@
-//! Typed configuration loaded from environment (and optional `.env` via dotenvy in binaries).
+//! Service configuration from the environment.
+//!
+//! Variables use the `AUTH_` or `FLAG_` prefix (see [`AuthServiceConfig::from_env`],
+//! [`FlagServiceConfig::from_env`]). Nested keys can use `__`, e.g. `AUTH__FOO__BAR`.
+//! Docker and shells pass booleans and numbers as strings; deserializers in `serde_env`
+//! accept both native JSON values and string forms.
 
 use figment::{providers::Env, Figment};
 use serde::Deserialize;
 use std::fmt;
 use std::net::SocketAddr;
 
+/// Serde helpers so Figment/env strings deserialize into `bool`, `u64`, and `u16`.
 mod serde_env {
     use super::*;
     use serde::de::{self, Deserializer, Visitor};
@@ -84,19 +90,25 @@ mod serde_env {
     }
 }
 
+/// Auth HTTP service: bind address, database, JWT signing, and runtime toggles.
 #[derive(Debug, Clone, Deserialize)]
 pub struct AuthServiceConfig {
+    /// Listen address (typically `0.0.0.0` in containers).
     #[serde(default = "default_bind_host")]
     pub host: String,
     #[serde(default = "default_auth_port", deserialize_with = "serde_env::u16_from_env")]
     pub port: u16,
+    /// PostgreSQL URL for the auth database only.
     #[serde(default)]
     pub database_url: String,
     /// RSA private key PEM (inline or path via `jwt_private_key_path`)
     pub jwt_private_key_pem: Option<String>,
+    /// Filesystem path to an RSA private key PEM (alternative to `jwt_private_key_pem`).
     pub jwt_private_key_path: Option<String>,
+    /// `iss` claim on issued JWTs; the flag service must expect the same value.
     #[serde(default = "default_jwt_issuer")]
     pub jwt_issuer: String,
+    /// `aud` claim on issued JWTs.
     #[serde(default = "default_jwt_audience")]
     pub jwt_audience: String,
     /// Access token lifetime in seconds
@@ -105,9 +117,12 @@ pub struct AuthServiceConfig {
         deserialize_with = "serde_env::u64_from_env"
     )]
     pub jwt_access_ttl_secs: u64,
+    /// When `production`, JSON logs and stricter CORS defaults apply.
     #[serde(default)]
     pub environment: Environment,
+    /// Comma-separated allowed `Origin` headers; unset in dev allows any origin.
     pub cors_allowed_origins: Option<String>,
+    /// Run embedded SeaORM migrations before accepting traffic.
     #[serde(
         default = "default_run_migrations",
         deserialize_with = "serde_env::bool_from_env"
@@ -139,24 +154,32 @@ fn default_run_migrations() -> bool {
     true
 }
 
+/// Feature-flag HTTP service: bind address, flags database, and auth service URL for JWKS.
 #[derive(Debug, Clone, Deserialize)]
 pub struct FlagServiceConfig {
+    /// Listen address (typically `0.0.0.0` in containers).
     #[serde(default = "default_bind_host")]
     pub host: String,
     #[serde(default = "default_flag_port", deserialize_with = "serde_env::u16_from_env")]
     pub port: u16,
+    /// PostgreSQL URL for the flags database only.
     #[serde(default)]
     pub database_url: String,
-    /// Base URL of auth service (e.g. http://auth-service:3000) for JWKS
+    /// Base URL of the auth service (e.g. `http://auth-service:3000`) used to fetch JWKS.
     #[serde(default)]
     pub auth_base_url: String,
+    /// Expected JWT `iss`; must match what the auth service puts on tokens.
     #[serde(default = "default_jwt_issuer")]
     pub jwt_issuer: String,
+    /// Expected JWT `aud`.
     #[serde(default = "default_jwt_audience")]
     pub jwt_audience: String,
+    /// When `production`, JSON logs and stricter CORS defaults apply.
     #[serde(default)]
     pub environment: Environment,
+    /// Comma-separated allowed `Origin` headers; unset in dev allows any origin.
     pub cors_allowed_origins: Option<String>,
+    /// Run embedded SeaORM migrations before accepting traffic.
     #[serde(
         default = "default_run_migrations",
         deserialize_with = "serde_env::bool_from_env"
@@ -168,6 +191,7 @@ fn default_flag_port() -> u16 {
     3001
 }
 
+/// Log format and some default security-related behavior.
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum Environment {
@@ -176,6 +200,7 @@ pub enum Environment {
 }
 
 impl Environment {
+    /// Whether this deployment should use production-oriented defaults.
     pub fn is_production(self) -> bool {
         matches!(self, Self::Production)
     }
@@ -187,6 +212,7 @@ impl Default for Environment {
     }
 }
 
+/// Failure loading or validating configuration.
 #[derive(Debug, thiserror::Error)]
 pub enum ConfigError {
     #[error("configuration error: {0}")]
@@ -206,6 +232,7 @@ fn flag_figment() -> Figment {
 }
 
 impl AuthServiceConfig {
+    /// Load from `AUTH_*` environment variables (via Figment).
     pub fn from_env() -> Result<Self, ConfigError> {
         let c: Self = auth_figment().extract()?;
         if c.jwt_private_key_pem.is_none() && c.jwt_private_key_path.is_none() {
@@ -219,6 +246,7 @@ impl AuthServiceConfig {
         Ok(c)
     }
 
+    /// TCP listen address for the HTTP server.
     pub fn socket_addr(&self) -> SocketAddr {
         format!("{}:{}", self.host, self.port)
             .parse()
@@ -227,6 +255,7 @@ impl AuthServiceConfig {
 }
 
 impl FlagServiceConfig {
+    /// Load from `FLAG_*` environment variables (via Figment).
     pub fn from_env() -> Result<Self, ConfigError> {
         let c: Self = flag_figment().extract()?;
         if c.database_url.is_empty() {
@@ -238,6 +267,7 @@ impl FlagServiceConfig {
         Ok(c)
     }
 
+    /// TCP listen address for the HTTP server.
     pub fn socket_addr(&self) -> SocketAddr {
         format!("{}:{}", self.host, self.port)
             .parse()

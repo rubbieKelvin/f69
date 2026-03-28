@@ -1,3 +1,5 @@
+//! HTTP API for feature flags; trusts JWTs minted by the auth service (JWKS).
+
 use std::time::Duration;
 
 use anyhow::Context;
@@ -39,6 +41,7 @@ async fn main() -> anyhow::Result<()> {
             .context("flag migrations")?;
     }
 
+    // Re-fetch JWKS periodically so key rotation on the auth service is picked up.
     let jwks = JwksCache::new(&config.auth_base_url, Duration::from_secs(300));
     let jwt = JwtValidator::new(&config.jwt_issuer, &config.jwt_audience);
 
@@ -59,7 +62,7 @@ async fn main() -> anyhow::Result<()> {
             get(v1::list_flags).post(v1::create_flag),
         )
         .layer(DefaultBodyLimit::disable())
-        .layer(RequestBodyLimitLayer::new(256 * 1024))
+        .layer(RequestBodyLimitLayer::new(256 * 1024)) // explicit cap instead of Axum default
         .layer(TimeoutLayer::with_status_code(
             axum::http::StatusCode::REQUEST_TIMEOUT,
             Duration::from_secs(30),
@@ -85,6 +88,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// CORS: explicit allowlist in production; permissive in development when unset.
 fn build_cors(config: &FlagServiceConfig) -> CorsLayer {
     let mut layer = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::OPTIONS])

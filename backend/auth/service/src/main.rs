@@ -1,3 +1,5 @@
+//! Identity service: registration, login, RS256 JWT issuance, and JWKS for other services.
+
 use std::time::Duration;
 
 use anyhow::Context;
@@ -66,6 +68,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .route("/v1/register", post(v1::register))
         .route("/v1/login", post(v1::login))
+        // Axum default body limit is small; we set an explicit cap below instead.
         .layer(DefaultBodyLimit::disable())
         .layer(RequestBodyLimitLayer::new(256 * 1024))
         .layer(TimeoutLayer::with_status_code(
@@ -93,6 +96,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Read PEM from inline config or from disk.
 fn load_jwt_pem(config: &AuthServiceConfig) -> anyhow::Result<String> {
     if let Some(pem) = &config.jwt_private_key_pem {
         return Ok(pem.clone());
@@ -103,6 +107,7 @@ fn load_jwt_pem(config: &AuthServiceConfig) -> anyhow::Result<String> {
     anyhow::bail!("no JWT private key configured")
 }
 
+/// CORS: explicit allowlist in production; permissive in development when unset.
 fn build_cors(config: &AuthServiceConfig) -> CorsLayer {
     let mut layer = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::OPTIONS])

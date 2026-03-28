@@ -1,3 +1,5 @@
+//! JSON API errors returned to clients (no stack traces).
+
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -5,6 +7,7 @@ use axum::{
 };
 use serde::Serialize;
 
+/// Stable error envelope for HTTP JSON responses.
 #[derive(Debug, Serialize)]
 pub struct ErrorBody {
     pub error: String,
@@ -12,6 +15,7 @@ pub struct ErrorBody {
     pub code: Option<&'static str>,
 }
 
+/// Application-level HTTP errors for auth routes.
 #[derive(Debug)]
 pub enum ApiError {
     BadRequest(&'static str),

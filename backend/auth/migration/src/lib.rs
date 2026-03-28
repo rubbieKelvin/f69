@@ -1,3 +1,5 @@
+//! SeaORM migrations for the auth database (`users` table).
+
 pub use sea_orm_migration::prelude::*;
 
 mod m20240328_000001_create_users;

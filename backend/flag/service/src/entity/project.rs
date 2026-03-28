@@ -1,3 +1,5 @@
+//! A feature-flag namespace; `owner_user_id` matches the auth service user id (`sub`).
+
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]

@@ -1,3 +1,5 @@
+//! Boolean flag belonging to a single project (unique `(project_id, key)` in the DB).
+
 use sea_orm::entity::prelude::*;
 
 use super::project;

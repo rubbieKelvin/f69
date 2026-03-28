@@ -1,3 +1,5 @@
+//! Extractor: validates `Authorization: Bearer` using JWKS from the auth service.
+
 use std::future::Future;
 
 use axum::{
@@ -10,6 +12,7 @@ use uuid::Uuid;
 
 use crate::state::AppState;
 
+/// Authenticated subject resolved from a valid JWT (`sub` claim = user id).
 #[derive(Debug, Clone)]
 pub struct AuthUser {
     pub user_id: Uuid,
@@ -27,6 +30,7 @@ where
         state: &S,
     ) -> impl Future<Output = Result<Self, Self::Rejection>> + Send {
         let state = AppState::from_ref(state);
+        // Clone header value here: `Parts` cannot be held across the async block.
         let auth = parts
             .headers
             .get(header::AUTHORIZATION)

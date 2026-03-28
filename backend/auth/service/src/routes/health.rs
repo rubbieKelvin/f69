@@ -1,3 +1,5 @@
+//! Liveness (`/health`) and readiness (`/ready`) probes.
+
 use axum::{
     extract::State,
     http::StatusCode,
@@ -13,6 +15,7 @@ pub struct HealthResponse {
     pub status: &'static str,
 }
 
+/// Process is up (does not check dependencies).
 pub async fn health() -> impl IntoResponse {
     (
         StatusCode::OK,
@@ -25,6 +28,7 @@ pub struct ReadyResponse {
     pub status: &'static str,
 }
 
+/// Database accepts connections.
 pub async fn ready(State(state): State<AppState>) -> impl IntoResponse {
     match state.db.ping().await {
         Ok(()) => (

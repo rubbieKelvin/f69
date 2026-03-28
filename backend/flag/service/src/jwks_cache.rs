@@ -1,3 +1,5 @@
+//! In-memory JWKS cache with TTL to avoid hitting the auth service on every request.
+
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
@@ -6,6 +8,7 @@ use tokio::sync::RwLock;
 
 type CachedJwks = Option<(Instant, JwksDoc)>;
 
+/// Fetches `GET {auth}/.well-known/jwks.json` and caches the parsed document.
 pub struct JwksCache {
     client: reqwest::Client,
     jwks_url: String,
@@ -14,6 +17,7 @@ pub struct JwksCache {
 }
 
 impl JwksCache {
+    /// `ttl` controls how long cached keys are reused before a refresh.
     pub fn new(auth_base_url: impl Into<String>, ttl: Duration) -> Arc<Self> {
         let base = auth_base_url.into().trim_end_matches('/').to_string();
         let jwks_url = format!("{}/.well-known/jwks.json", base);
@@ -28,6 +32,7 @@ impl JwksCache {
         })
     }
 
+    /// Returns cached JWKS if fresh; otherwise downloads and stores a new copy.
     pub async fn get(&self) -> Result<JwksDoc, JwksFetchError> {
         {
             let guard = self.inner.read().await;
@@ -58,6 +63,7 @@ impl JwksCache {
     }
 }
 
+/// Network or HTTP failures while loading JWKS.
 #[derive(Debug, thiserror::Error)]
 pub enum JwksFetchError {
     #[error("http: {0}")]
