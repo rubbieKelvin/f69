@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: f69
+      POSTGRES_PASSWORD: f69dev
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U f69 -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  auth-service:
+    build:
+      context: ..
+      dockerfile: deploy/auth.Dockerfile
+    environment:
+      AUTH_HOST: 0.0.0.0
+      AUTH_PORT: 3000
+      AUTH_DATABASE_URL: postgres://f69:f69dev@postgres:5432/auth
+      AUTH_JWT_PRIVATE_KEY_PATH: /secrets/jwt.pem
+      AUTH_JWT_ISSUER: f69-auth
+      AUTH_JWT_AUDIENCE: f69-api
+      AUTH_JWT_ACCESS_TTL_SECS: "3600"
+      AUTH_ENVIRONMENT: production
+      AUTH_RUN_MIGRATIONS_ON_STARTUP: "true"
+      RUST_LOG: info
+    volumes:
+      - ./dev-jwt.pem:/secrets/jwt.pem:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  flag-service:
+    build:
+      context: ..
+      dockerfile: deploy/flag.Dockerfile
+    environment:
+      FLAG_HOST: 0.0.0.0
+      FLAG_PORT: 3001
+      FLAG_DATABASE_URL: postgres://f69:f69dev@postgres:5432/flags
+      FLAG_AUTH_BASE_URL: http://auth-service:3000
+      FLAG_JWT_ISSUER: f69-auth
+      FLAG_JWT_AUDIENCE: f69-api
+      FLAG_ENVIRONMENT: production
+      FLAG_RUN_MIGRATIONS_ON_STARTUP: "true"
+      RUST_LOG: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  postgres_data:

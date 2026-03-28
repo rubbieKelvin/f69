@@ -1,0 +1,62 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/shared-config",
+    "crates/shared-telemetry",
+    "crates/shared-security",
+    "crates/auth-migration",
+    "crates/auth-service",
+    "crates/flag-migration",
+    "crates/flag-service",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1"
+async-trait = "0.1"
+axum = { version = "0.8", features = ["macros"] }
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde", "clock"] }
+figment = { version = "0.10", features = ["env", "test"] }
+jsonwebtoken = "9"
+argon2 = "0.5"
+rand = "0.8"
+rsa = { version = "0.9", features = ["pem", "sha2"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+sea-orm = { version = "1.1", features = [
+    "sqlx-postgres",
+    "runtime-tokio-rustls",
+    "macros",
+] }
+sea-orm-migration = { version = "1.1", features = [
+    "sqlx-postgres",
+    "runtime-tokio-rustls",
+] }
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = [
+    "cors",
+    "trace",
+    "timeout",
+    "limit",
+    "set-header",
+    "request-id",
+    "util",
+] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+validator = { version = "0.19", features = ["derive"] }
+reqwest = { version = "0.12", default-features = false, features = [
+    "json",
+    "rustls-tls",
+] }
+once_cell = "1.19"
+hex = "0.4"

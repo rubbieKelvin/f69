@@ -1,0 +1,10 @@
+[package]
+name = "shared-config"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+figment.workspace = true
+serde.workspace = true
+thiserror.workspace = true

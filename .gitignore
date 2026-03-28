@@ -10,6 +10,10 @@ wheels/
 .venv
 .env
 
+# Rust backend
+backend/deploy/dev-jwt.pem
+backend/target/
+
 env/
 
 */migrations

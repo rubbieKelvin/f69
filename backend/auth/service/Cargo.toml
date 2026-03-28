@@ -1,0 +1,31 @@
+[package]
+name = "auth-service"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "auth-service"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+chrono.workspace = true
+dotenvy = "0.15"
+sea-orm.workspace = true
+sea-orm-migration.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+shared-config = { path = "../shared-config" }
+shared-security = { path = "../shared-security" }
+shared-telemetry = { path = "../shared-telemetry" }
+thiserror.workspace = true
+tokio.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+validator.workspace = true
+auth-migration = { path = "../auth-migration" }
