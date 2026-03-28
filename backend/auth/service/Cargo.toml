@@ -18,9 +18,9 @@ sea-orm.workspace = true
 sea-orm-migration.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-shared-config = { path = "../shared-config" }
-shared-security = { path = "../shared-security" }
-shared-telemetry = { path = "../shared-telemetry" }
+shared-config = { path = "../../shared/config" }
+shared-security = { path = "../../shared/security" }
+shared-telemetry = { path = "../../shared/telemetry" }
 thiserror.workspace = true
 tokio.workspace = true
 tower.workspace = true
@@ -28,4 +28,4 @@ tower-http.workspace = true
 tracing.workspace = true
 uuid.workspace = true
 validator.workspace = true
-auth-migration = { path = "../auth-migration" }
+auth-migration = { path = "../migration" }

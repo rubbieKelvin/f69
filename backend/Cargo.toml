@@ -1,13 +1,13 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/shared-config",
-    "crates/shared-telemetry",
-    "crates/shared-security",
-    "crates/auth-migration",
-    "crates/auth-service",
-    "crates/flag-migration",
-    "crates/flag-service",
+    "shared/config",
+    "shared/telemetry",
+    "shared/security",
+    "auth/migration",
+    "auth/service",
+    "flag/migration",
+    "flag/service",
 ]
 
 [workspace.package]

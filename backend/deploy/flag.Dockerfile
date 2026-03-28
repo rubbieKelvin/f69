@@ -2,7 +2,9 @@
 FROM rust:1.85-bookworm AS builder
 WORKDIR /app
 COPY Cargo.toml Cargo.lock ./
-COPY crates ./crates
+COPY auth ./auth
+COPY flag ./flag
+COPY shared ./shared
 RUN cargo build --release -p flag-service
 
 FROM debian:bookworm-slim AS runtime
